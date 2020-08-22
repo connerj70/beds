@@ -5,6 +5,7 @@ import (
 	"github.com/gobuffalo/envy"
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
+	tokenauth "github.com/gobuffalo/mw-tokenauth"
 	"github.com/unrolled/secure"
 
 	"beds/models"
@@ -59,8 +60,15 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
-		app.GET("/", HomeHandler)
+		// Setup up and use authentication.
+		app.Use(tokenauth.New(tokenauth.Options{}))
 
+		var userResource UsersResource
+		app.Middleware.Skip(tokenauth.New(tokenauth.Options{}), HomeHandler, userResource.Create, userResource.New, userResource.SignIn)
+
+		app.GET("/", HomeHandler)
+		app.GET("/signin", userResource.SignIn)
+		app.Resource("/users", userResource)
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 
