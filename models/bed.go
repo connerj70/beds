@@ -18,6 +18,7 @@ type Bed struct {
 	Title       string    `json:"title" db:"title"`
 	Description string    `json:"description" db:"description"`
 	Frequency   int       `json:"frequency" db:"frequency"`
+	Complete    bool      `json:"complete" db:"complete"`
 }
 
 // String is not required by pop and may be deleted

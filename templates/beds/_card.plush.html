@@ -1,6 +1,6 @@
 <div class="card mb-3">
     <div class="card-body">
-        <h5 class="card-title"><%= bed.Title%></h5>
+        <h2 class="card-title"><%= bed.Title%></h2>
         <p class="card-text"><%= bed.Description%></p>
         <div class="mb-2">
             Frequency: 
@@ -12,6 +12,14 @@
             Monthly
         <%}%>
         </div>
-        <%= linkTo(bed, {body: "view", class:"btn btn-secondary"}) %>
+        <div>
+            Complete: 
+            <%= if(bed.Complete) {%>
+                <i class="far fa-check-square"></i>
+            <% } else {%>
+                <i class="far fa-square"></i>
+            <%}%>
+        </div>
+        <%= linkTo(bed, {body: "view", class:"btn btn-secondary mt-3"}) %>
     </div>
 </div>

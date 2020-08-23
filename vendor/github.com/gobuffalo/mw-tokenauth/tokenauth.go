@@ -95,7 +95,7 @@ func New(options Options) buffalo.MiddlewareFunc {
 			// get Authorisation header value
 			authToken := c.Session().Get("Authorization")
 			if authToken == nil {
-				return c.Error(http.StatusUnauthorized, errors.New("missing authorization token"))
+				return c.Redirect(http.StatusUnauthorized, "/")
 			}
 			authTokenString := authToken.(string)
 

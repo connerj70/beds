@@ -72,6 +72,8 @@ func (v BedsResource) Show(c buffalo.Context) error {
 
 	// Allocate an empty Bed
 	bed := &models.Bed{}
+	userID := c.Session().Get("userid").(uuid.UUID)
+	c.Set("userid", userID)
 
 	// To find the Bed the parameter bed_id is used.
 	if err := tx.Find(bed, c.Param("bed_id")); err != nil {
