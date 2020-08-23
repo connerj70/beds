@@ -1,19 +1,22 @@
 <div class="py-4 mb-2">
     <h3 class="d-inline-block">Sign In</h3>
-  </div>
-  
-  <%= if (errors.HasAny()) { %>
-  <div class="row">
+</div>
+
+<%= if (error != "") { %>
+<div class="row">
     <div class="col-md-12">
-          <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
-            <span><%= errors.Errors["errors"]  %></span>
-          </div>
+        <div class="alert alert-danger" role="alert">
+            <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+            >
+                ×
+            </button>
+            <span><%= error %></span>
+        </div>
     </div>
-  </div>
-  <% } %>
-  
-  <%= formFor(user, {action: usersPath(), method: "POST"}) { %>
-    <%= partial("users/form.html") %>
-    <%= linkTo(usersPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
-  <% } %>
+</div>
+<% } %> <%= formFor(user, {action: signinPath(), method: "POST"}) { %>
+<%=partial("users/formsignin.html") %> <% } %>
