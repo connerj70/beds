@@ -33,8 +33,6 @@ github.com/gobuffalo/buffalo/render
 github.com/gobuffalo/buffalo/runtime
 github.com/gobuffalo/buffalo/servers
 github.com/gobuffalo/buffalo/worker
-# github.com/gobuffalo/buffalo-goth v1.3.0
-## explicit
 # github.com/gobuffalo/buffalo-pop/v2 v2.0.6
 ## explicit
 github.com/gobuffalo/buffalo-pop/v2/pop
@@ -56,8 +54,6 @@ github.com/gobuffalo/flect/name
 github.com/gobuffalo/genny
 github.com/gobuffalo/genny/internal/takeon/github.com/markbates/oncer
 github.com/gobuffalo/genny/internal/takeon/github.com/markbates/safe
-# github.com/gobuffalo/genny/v2 v2.0.6
-## explicit
 # github.com/gobuffalo/github_flavored_markdown v1.1.0
 github.com/gobuffalo/github_flavored_markdown
 github.com/gobuffalo/github_flavored_markdown/internal/russross/blackfriday
@@ -124,7 +120,6 @@ github.com/gobuffalo/plush/lexer
 github.com/gobuffalo/plush/parser
 github.com/gobuffalo/plush/token
 # github.com/gobuffalo/pop v4.13.1+incompatible
-## explicit
 github.com/gobuffalo/pop
 github.com/gobuffalo/pop/associations
 github.com/gobuffalo/pop/columns
@@ -192,7 +187,6 @@ github.com/kballard/go-shellquote
 # github.com/konsorten/go-windows-terminal-sequences v1.0.3
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/lib/pq v1.3.0
-## explicit
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
@@ -268,9 +262,11 @@ golang.org/x/crypto/blowfish
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/net v0.0.0-20200625001655-4c5254603344
+## explicit
 golang.org/x/net/html
 golang.org/x/net/html/atom
 # golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
+## explicit
 golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20200821140526-fda516888d29
 ## explicit
@@ -291,8 +287,6 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.0.0-20200822203824-307de81be3f4
-## explicit
 # golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 ## explicit
 golang.org/x/xerrors

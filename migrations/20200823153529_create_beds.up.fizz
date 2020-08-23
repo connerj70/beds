@@ -1,0 +1,7 @@
+create_table("beds") {
+	t.Column("id", "uuid", {primary: true})
+	t.Timestamps()
+	t.Column("user_id", "uuid")
+	t.Column("title", "string")
+	t.Column("description", "string")
+}

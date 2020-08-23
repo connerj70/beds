@@ -64,12 +64,14 @@ func App() *buffalo.App {
 		app.Use(tokenauth.New(tokenauth.Options{}))
 
 		var userResource UsersResource
-		app.Middleware.Skip(tokenauth.New(tokenauth.Options{}), HomeHandler, userResource.Create, userResource.New, userResource.SignIn, userResource.SignInPage)
+		app.Middleware.Skip(tokenauth.New(tokenauth.Options{}), HomeHandler, userResource.Create, userResource.New, userResource.SignIn, userResource.SignInPage, userResource.SignOut)
 
 		app.GET("/", HomeHandler)
 		app.GET("/signin", userResource.SignInPage)
 		app.POST("/signin", userResource.SignIn)
+		app.GET("/signout", userResource.SignOut)
 		app.Resource("/users", userResource)
+		app.Resource("/beds", BedsResource{})
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 

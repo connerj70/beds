@@ -83,8 +83,16 @@ func (v UsersResource) Show(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
+	beds := []models.Bed{}
+	if err := tx.Where("user_id = ?", user.ID).All(&beds); err != nil {
+		if errors.Cause(err) != sql.ErrNoRows {
+			return c.Error(http.StatusInternalServerError, err)
+		}
+	}
+
 	return responder.Wants("html", func(c buffalo.Context) error {
 		c.Set("user", user)
+		c.Set("beds", beds)
 
 		return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
@@ -142,6 +150,22 @@ func (v UsersResource) Create(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r.XML(verrs))
 		}).Respond(c)
 	}
+
+	// Set the authentication token on the response
+	claims := jwt.MapClaims{}
+	claims["userid"] = user.ID
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	// add more claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	secretKey := envy.Get("JWT_SECRET", "")
+
+	tokenString, err := token.SignedString([]byte(secretKey))
+	if err != nil {
+		return fmt.Errorf("failed to create authorization token: %w", err)
+	}
+
+	c.Session().Set("Authorization", fmt.Sprintf("Bearer %s", tokenString))
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// If there are no errors set a success message
@@ -328,9 +352,12 @@ func (v UsersResource) SignIn(c buffalo.Context) error {
 		return fmt.Errorf("failed to create authorization token: %w", err)
 	}
 
-	c.Request().Header.Set("Authorization", fmt.Sprintf("Bearer %s", tokenString))
-
-	c.Flash().Add("success", "Welcome to Beds!")
+	c.Session().Set("Authorization", fmt.Sprintf("Bearer %s", tokenString))
 
 	return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/users/%s", checkUser.ID))
+}
+
+func (v UsersResource) SignOut(c buffalo.Context) error {
+	c.Session().Clear()
+	return c.Redirect(http.StatusSeeOther, "/")
 }

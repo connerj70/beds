@@ -1,0 +1,6 @@
+- id: "bed.created.success"
+  translation: "Bed was successfully created."
+- id: "bed.updated.success"
+  translation: "Bed was successfully updated."
+- id: "bed.destroyed.success"
+  translation: "Bed was successfully destroyed."

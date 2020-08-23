@@ -93,9 +93,13 @@ func New(options Options) buffalo.MiddlewareFunc {
 	return func(next buffalo.Handler) buffalo.Handler {
 		return func(c buffalo.Context) error {
 			// get Authorisation header value
-			authString := c.Request().Header.Get("Authorization")
+			authToken := c.Session().Get("Authorization")
+			if authToken == nil {
+				return c.Error(http.StatusUnauthorized, errors.New("missing authorization token"))
+			}
+			authTokenString := authToken.(string)
 
-			tokenString, err := getJwtToken(authString, options.AuthScheme)
+			tokenString, err := getJwtToken(authTokenString, options.AuthScheme)
 			// if error on getting the token, return with status unauthorized
 			if err != nil {
 				return c.Error(http.StatusUnauthorized, err)
