@@ -340,7 +340,7 @@ func (v UsersResource) SignIn(c buffalo.Context) error {
 
 	// Set the authentication token on the response
 	claims := jwt.MapClaims{}
-	claims["userid"] = user.ID
+	claims["userid"] = checkUser.ID
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	// add more claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -353,6 +353,7 @@ func (v UsersResource) SignIn(c buffalo.Context) error {
 	}
 
 	c.Session().Set("Authorization", fmt.Sprintf("Bearer %s", tokenString))
+	c.Session().Set("userid", checkUser.ID)
 
 	return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/users/%s", checkUser.ID))
 }

@@ -17,6 +17,7 @@ type Bed struct {
 	UserID      uuid.UUID `json:"user_id" db:"user_id"`
 	Title       string    `json:"title" db:"title"`
 	Description string    `json:"description" db:"description"`
+	Frequency   int       `json:"frequency" db:"frequency"`
 }
 
 // String is not required by pop and may be deleted

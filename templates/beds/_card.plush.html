@@ -1,0 +1,17 @@
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title"><%= bed.Title%></h5>
+        <p class="card-text"><%= bed.Description%></p>
+        <div class="mb-2">
+            Frequency: 
+        <%= if (bed.Frequency == 1) { %>
+            Daily
+        <%} else if(bed.Frequency == 2) {%>
+            Weekly
+        <%} else {%>
+            Monthly
+        <%}%>
+        </div>
+        <%= linkTo(bed, {body: "view", class:"btn btn-secondary"}) %>
+    </div>
+</div>

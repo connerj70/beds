@@ -1,2 +1,4 @@
-<%= f.InputTag("UserID") %> <%= f.InputTag("Title") %>
+<%= f.InputTag("Title") %>
+<%= f.TextArea("Description") %>
+<%= f.SelectTag("Frequency", {options: {"Daily": 1, "Weekly": 2, "Monthly": 3}}) %>
 <button class="btn btn-success" role="submit">Save</button>

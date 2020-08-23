@@ -1,11 +1,20 @@
 <div class="py-4 mb-2">
     <h3 class="d-inline-block">User Home Page</h3>
-
     <div>
         <h4>Your Beds</h4>
-        <%= if (beds && len(beds) > 0) { %> <%= for (key, bed) in beds { %> <%=
-        key %> <%= bed %> <% } %> <% } else { %>
-        <h5>You don't have any beds. Create one now!</h5>
-        <%= linkTo(newBedsPath(), {body: "Create a new bed"}) %> <% } %>
+        <%= if (beds && len(beds) > 0) { %> 
+            <%= linkTo(newBedsPath(), {body: "Create bed", class: "btn btn-primary mb-4"}) %> 
+            <%= for (key, bed) in beds { %> 
+                <%= partial("beds/card.html") %>
+            <% } %> 
+        <% } else { %>
+
+            <p>Welcome to Beds! Beds is an app to help you form daily habits. A "bed" is a small task you want to do everyday. Think something like making your bed each morning.</p>
+
+            <p>Create your first bed below and start tracking your habit forming progress.</p>
+
+            <h5>You don't have any beds. Create your first one now!</h5>
+            <%= linkTo(newBedsPath(), {body: "Create your first bed"}) %> 
+        <% } %>
     </div>
 </div>
