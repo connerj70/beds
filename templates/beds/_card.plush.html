@@ -1,25 +1,25 @@
 <div class="card mb-3">
     <div class="card-body">
-        <h2 class="card-title"><%= bed.Title%></h2>
-        <p class="card-text"><%= bed.Description%></p>
-        <div class="mb-2">
-            Frequency: 
-        <%= if (bed.Frequency == 1) { %>
-            Daily
-        <%} else if(bed.Frequency == 2) {%>
-            Weekly
-        <%} else {%>
-            Monthly
-        <%}%>
+        <h5 class="card-title"><%= bed.Title%></h5>
+        <div class="card-text">
+            <p><%= bed.Description%></p>
+            <div class="mb-1">
+                Frequency: <%= if (bed.Frequency == 1) { %> Daily <%} else
+                if(bed.Frequency == 2) {%> Weekly <%} else {%> Monthly <%}%>
+            </div>
+            <div>
+                Complete:
+                <input
+                    data-bedid="<%=bed.ID %>"
+                    type="checkbox"
+                    class="complete"
+                    name="complete"
+                    <%= if (bed.Complete) { %>
+                    <%= "checked" %>
+                    <%}%>
+                />
+            </div>
+            <%= linkTo(bed, {body: "view", class:"btn btn-secondary mt-2"}) %>
         </div>
-        <div>
-            Complete: 
-            <%= if(bed.Complete) {%>
-                <i class="far fa-check-square"></i>
-            <% } else {%>
-                <i class="far fa-square"></i>
-            <%}%>
-        </div>
-        <%= linkTo(bed, {body: "view", class:"btn btn-secondary mt-3"}) %>
     </div>
 </div>

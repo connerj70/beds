@@ -90,9 +90,22 @@ func (v UsersResource) Show(c buffalo.Context) error {
 		}
 	}
 
+	var completeBeds []models.Bed
+	var incompleteBeds []models.Bed
+	for _, bed := range beds {
+		// split beds in completed and incomplete pile
+		if bed.Complete {
+			completeBeds = append(completeBeds, bed)
+		} else {
+			incompleteBeds = append(incompleteBeds, bed)
+		}
+	}
+
 	return responder.Wants("html", func(c buffalo.Context) error {
 		c.Set("user", user)
 		c.Set("beds", beds)
+		c.Set("completeBeds", completeBeds)
+		c.Set("incompleteBeds", incompleteBeds)
 
 		return c.Render(http.StatusOK, r.HTML("/users/show.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {

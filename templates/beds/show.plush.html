@@ -1,6 +1,18 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block"><%= bed.Title %></h3>
-  <p><%= bed.Description %></p>
+<div class="py-4 mb-2 border mt-4 p-4">
+  <h3 class="d-inline-block">Title: <%= bed.Title %></h3>
+  <p>Description: <%= bed.Description %></p>
+  <div class="mb-4">
+    Complete:
+    <input
+        data-bedid="<%=bed.ID %>"
+        type="checkbox"
+        class="complete"
+        name="complete"
+        <%= if (bed.Complete) { %>
+        <%= "checked" %>
+        <%}%>
+    />
+  </div>
   <%= linkTo(userPath({ user_id: userid }), {class: "btn btn-primary", body: "Back"}) %>
 
   <div class="float-right">

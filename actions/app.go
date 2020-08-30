@@ -1,7 +1,11 @@
 package actions
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/buffalo/worker"
 	"github.com/gobuffalo/envy"
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
@@ -35,6 +39,7 @@ var T *i18n.Translator
 // `ServeFiles` is a CATCH-ALL route, so it should always be
 // placed last in the route declarations, as it will prevent routes
 // declared after it to never be called.
+
 func App() *buffalo.App {
 	if app == nil {
 		app = buffalo.New(buffalo.Options{
@@ -64,6 +69,7 @@ func App() *buffalo.App {
 		app.Use(tokenauth.New(tokenauth.Options{}))
 
 		var userResource UsersResource
+		var bedsResource BedsResource
 		app.Middleware.Skip(tokenauth.New(tokenauth.Options{}), HomeHandler, userResource.Create, userResource.New, userResource.SignIn, userResource.SignInPage, userResource.SignOut)
 
 		app.GET("/", HomeHandler)
@@ -71,8 +77,36 @@ func App() *buffalo.App {
 		app.POST("/signin", userResource.SignIn)
 		app.GET("/signout", userResource.SignOut)
 		app.Resource("/users", userResource)
-		app.Resource("/beds", BedsResource{})
+		app.POST("/beds/toggle_complete", bedsResource.ToggleComplete)
+		app.Resource("/beds", bedsResource)
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
+
+		// Setup workers
+		w := app.Worker
+		w.Register("reset_daily_beds", func(worker.Args) error {
+
+			fmt.Println("hi from worker")
+
+			return nil
+		})
+
+		// Push jobs on worker at the end of every day
+		go func() {
+			t := time.NewTicker(1 * time.Minute)
+			for {
+				select {
+				case currentTime := <-t.C:
+					if currentTime.Hour() == 0 && currentTime.Minute() == 0 {
+						w.Perform(worker.Job{
+							Queue:   "default",
+							Handler: "reset_daily_beds",
+							Args:    worker.Args{"user_id": 123},
+						})
+					}
+				}
+			}
+		}()
+
 	}
 
 	return app

@@ -240,6 +240,7 @@ func (v BedsResource) Destroy(c buffalo.Context) error {
 		return fmt.Errorf("no transaction found")
 	}
 
+	userID := c.Session().Get("userid").(uuid.UUID)
 	// Allocate an empty Bed
 	bed := &models.Bed{}
 
@@ -257,10 +258,32 @@ func (v BedsResource) Destroy(c buffalo.Context) error {
 		c.Flash().Add("success", T.Translate(c, "bed.destroyed.success"))
 
 		// Redirect to the index page
-		return c.Redirect(http.StatusSeeOther, "/beds")
+		return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/users/%s", userID.String()))
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.JSON(bed))
 	}).Wants("xml", func(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.XML(bed))
 	}).Respond(c)
+}
+
+func (v BedsResource) ToggleComplete(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	bedID := c.Param("bedid")
+
+	fmt.Println(bedID)
+
+	qry := tx.RawQuery("UPDATE beds SET complete = NOT complete WHERE id = ?", bedID)
+
+	err := qry.Exec()
+	if err != nil {
+		return fmt.Errorf("failed to update bed complete status: %w", err)
+	}
+
+	c.Response().WriteHeader(200)
+	return nil
 }

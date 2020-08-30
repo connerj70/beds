@@ -20,3 +20,4 @@
 </div>
 <% } %> <%= formFor(user, {action: signinPath(), method: "POST"}) { %>
 <%=partial("users/formsignin.html") %> <% } %>
+<div>Don't have an account? <a href="<%=newUsersPath()%>"> Create One</a></div>
