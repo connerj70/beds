@@ -85,7 +85,9 @@ func App() *buffalo.App {
 		w := app.Worker
 		w.Register("reset_daily_beds", func(worker.Args) error {
 
-			fmt.Println("hi from worker")
+			if err := models.DB.RawQuery("UPDATE beds SET complete = false WHERE frequency = 1").Exec(); err != nil {
+				return fmt.Errorf("failed to reset daily beds")
+			}
 
 			return nil
 		})
@@ -100,7 +102,6 @@ func App() *buffalo.App {
 						w.Perform(worker.Job{
 							Queue:   "default",
 							Handler: "reset_daily_beds",
-							Args:    worker.Args{"user_id": 123},
 						})
 					}
 				}
