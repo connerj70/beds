@@ -7,6 +7,7 @@ import (
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/worker"
 	"github.com/gobuffalo/envy"
+	csrf "github.com/gobuffalo/mw-csrf"
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
 	tokenauth "github.com/gobuffalo/mw-tokenauth"
@@ -15,7 +16,6 @@ import (
 	"beds/models"
 
 	"github.com/gobuffalo/buffalo-pop/v2/pop/popmw"
-	csrf "github.com/gobuffalo/mw-csrf"
 	i18n "github.com/gobuffalo/mw-i18n"
 	"github.com/gobuffalo/packr/v2"
 )
@@ -76,10 +76,10 @@ func App() *buffalo.App {
 		app.GET("/signin", userResource.SignInPage)
 		app.POST("/signin", userResource.SignIn)
 		app.GET("/signout", userResource.SignOut)
+		app.POST("/users/by_email", userResource.FindByEmail)
 		app.Resource("/users", userResource)
 		app.POST("/beds/toggle_complete", bedsResource.ToggleComplete)
 		app.Resource("/beds", bedsResource)
-		app.ServeFiles("/", assetsBox) // serve files from the public directory
 
 		// Setup workers
 		w := app.Worker
@@ -108,6 +108,10 @@ func App() *buffalo.App {
 			}
 		}()
 
+		app.POST("/friends/create", FriendsCreate)
+		app.GET("/friends/list/{id}", FriendsList)
+		app.GET("/friends/show", FriendsListPage)
+		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 
 	return app

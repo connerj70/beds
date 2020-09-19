@@ -92,7 +92,7 @@ func New(options Options) buffalo.MiddlewareFunc {
 	}
 	return func(next buffalo.Handler) buffalo.Handler {
 		return func(c buffalo.Context) error {
-			// get Authorisation header value
+			// get Authorization header value
 			c.Logger().Debug("about to get authorization from session")
 			authString := c.Session().Get("Authorization").(string)
 

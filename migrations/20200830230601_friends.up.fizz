@@ -2,5 +2,6 @@ create_table("friends") {
 	t.Column("id", "uuid", {primary: true})
 	t.Column("requester_id", "uuid")
     t.Column("receiver_id", "uuid")
+	t.Column("accepted", "bool")
 	t.Timestamps()
 }

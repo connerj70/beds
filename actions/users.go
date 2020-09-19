@@ -306,8 +306,6 @@ func (v UsersResource) Destroy(c buffalo.Context) error {
 func (v UsersResource) SignInPage(c buffalo.Context) error {
 	user := &models.User{}
 
-	fmt.Println(user)
-
 	c.Set("user", user)
 
 	return c.Render(http.StatusOK, r.HTML("/users/signin.plush.html"))
@@ -374,4 +372,27 @@ func (v UsersResource) SignIn(c buffalo.Context) error {
 func (v UsersResource) SignOut(c buffalo.Context) error {
 	c.Session().Clear()
 	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func (v UsersResource) FindByEmail(c buffalo.Context) error {
+
+	var user models.User
+
+	if err := c.Bind(&user); err != nil {
+		return fmt.Errorf("failed to bind: %w", err)
+	}
+
+	// Check if the user exists
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("transaction does not exist")
+	}
+
+	if err := tx.Where("email = ?", user.Email).First(&user); err != nil {
+		return fmt.Errorf("failed to get user by email: %w", err)
+	}
+
+	user.Password = ""
+
+	return c.Render(200, r.JSON(user))
 }

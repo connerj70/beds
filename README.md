@@ -33,3 +33,14 @@ We recommend you heading over to [http://gobuffalo.io](http://gobuffalo.io) and 
 Good luck!
 
 [Powered by Buffalo](http://gobuffalo.io)
+
+### Start database in docker container during development
+
+	docker run -e POSTGRES_PASSWORD=postgres -p 5433:5432 postgres
+
+	buffalo pop create
+
+	buffalo pop migrate
+
+### Log into docker container and check tables
+
