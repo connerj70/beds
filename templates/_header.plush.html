@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12 p-4 d-flex align-items-center justify-content-between">
         <a href="/"><img class="custom-logo" src=<%= assetPath("images/logo_transparent.png") %> /></a>
-        <%= if (claims) { %> 
+        <%= if (token) { %> 
             <%=linkTo(signoutPath(), {body: "Sign Out", class:"btn btn-warning"}) %> 
         <% } else {%>
             <ul class="d-flex flex-row align-items-center" style="list-style-type: none;">

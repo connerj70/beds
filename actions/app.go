@@ -150,6 +150,7 @@ func authenticate(next buffalo.Handler) buffalo.Handler {
 		if jwtString == "" {
 			return c.Redirect(http.StatusUnauthorized, "/signin")
 		}
+		c.Set("token", jwtString)
 		// Parse the jwt
 		_, err = jwt.Parse(jwtString, func(token *jwt.Token) (interface{}, error) {
 			// Don't forget to validate the alg is what you expect:
