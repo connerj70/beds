@@ -1,6 +1,7 @@
 'use strict';
 
 import modal from "./modal.js";
+import getUserIDFromCookies from "./cookies.js"
 
 const e = React.createElement;
 
@@ -21,7 +22,8 @@ class FriendsContainer extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:3000/friends/list/542aa22a-30f5-40b0-9a27-5974fb414802").then(resp => {
+        let userID = getUserIDFromCookies(document.cookie)
+        fetch(`/friends/list/${userID}`).then(resp => {
             resp.json().then(data => {
                 this.setState({
                     friends: data
@@ -37,10 +39,14 @@ class FriendsContainer extends React.Component {
     }
 
     submitModal() {
-        console.log(this.state.searchTerm)
-
         // go query the database for a user with this email
-        fetch("http://localhost:3000/users/by_email", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: this.state.searchTerm }) }).then(resp => {
+        fetch("/users/by_email", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: this.state.searchTerm }) }).then(resp => {
+            if (resp.status !== 200) {
+                resp.json().then(err => {
+                    alert(`There was an error with your request ${err.error}`)
+                })
+                return
+            }
             resp.json().then(data => {
                 this.setState({
                     addingFriend: data
@@ -56,11 +62,22 @@ class FriendsContainer extends React.Component {
     }
 
     addFriend() {
+        let userID = getUserIDFromCookies(document.cookie)
+
         // make a friend request to the database.
-        fetch("http://localhost:3000/friends/create", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ requester_id: '43a13d78-4127-4c80-b5fd-181abc3613ec', receiver_id: this.state.addingFriend.id }) })
+        fetch("/friends/create", { method: "POST", headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ requester_id: userID, receiver_id: this.state.addingFriend.id }) })
             .then(resp => {
+                if (resp.status !== 200) {
+                    resp.json().then(err => {
+                        alert(`there was an error in your request: ${err.error}`)
+                        return
+                    })
+                }
                 resp.json().then(data => {
                     console.log(data)
+                    this.setState({
+                        friends: this.state.friends.concat(data)
+                    })
                 })
             })
     }

@@ -44,3 +44,10 @@ Good luck!
 
 ### Log into docker container and check tables
 
+### WHERE I LEFT OFF
+Was in the middle of switching up how we do authentication. I'm going to do my own jwt stuff instead of using the package.
+
+I now need to switch the sign in page to do stuff through react so I can accept the token back from my api request and set it in the local storage.
+
+Then I can send this jwt on all subsequenct requests.
+

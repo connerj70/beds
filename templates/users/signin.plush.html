@@ -1,9 +1,9 @@
-<div class="py-4 mb-2">
+<div class="py-4 mb-2 pl-4">
     <h3 class="d-inline-block">Sign In</h3>
 </div>
-
+<div id="bouncer"></div>
 <%= if (error != "") { %>
-<div class="row">
+<div class="row pl-4">
     <div class="col-md-12">
         <div class="alert alert-danger" role="alert">
             <button
@@ -18,6 +18,11 @@
         </div>
     </div>
 </div>
-<% } %> <%= formFor(user, {action: signinPath(), method: "POST"}) { %>
-<%=partial("users/formsignin.html") %> <% } %>
-<div>Don't have an account? <a href="<%=newUsersPath()%>"> Create One</a></div>
+   <% } %> 
+        <div class="row pl-4">
+            <div class="col-lg-6">
+            <%= formFor(user, {action: signinPath(), method: "POST"}) { %>
+            <%=partial("users/formsignin.html") %> <% } %>
+            <div class="mt-4">Don't have an account? <a href="<%=newUsersPath()%>"> Create One</a></div>
+    </div>
+</div>

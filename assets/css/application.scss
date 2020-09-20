@@ -3,3 +3,33 @@
 
 @import "buffalo";
 @import "modal";
+
+#blob-1 {
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    background: #d3d3d3;
+    width: 400px;
+    height: 500px;
+    z-index: -1;
+    opacity: 0.2;
+    border-radius: 0 220px 60px 120px;
+    transform: skew(20deg);
+}
+
+#bouncer {
+    position: absolute;
+    background: #d3d3d3;
+    width: 400px;
+    height: 500px;
+    z-index: -1;
+    opacity: 0.2;
+    border-radius: 45px 220px 60px 120px;
+    transform: skew(20deg);
+}
+
+.custom-logo {
+    max-width: 150px;
+    position: relative;
+    left: -30px;
+}

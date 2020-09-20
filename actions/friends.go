@@ -12,7 +12,6 @@ import (
 
 // FriendsCreate default implementation.
 func FriendsCreate(c buffalo.Context) error {
-
 	var friend models.Friend
 
 	if err := c.Bind(&friend); err != nil {
@@ -20,8 +19,11 @@ func FriendsCreate(c buffalo.Context) error {
 	}
 
 	// Check to ensure this user is not trying to create a friendship on behalf of another user.
-	userID := c.Session().Get("userid")
-	if friend.Requester != userID {
+	userID, err := c.Cookies().Get("user_id")
+	if err != nil {
+		return fmt.Errorf("failed to get userID from cookies: %w", err)
+	}
+	if friend.Requester.String() != userID {
 		return fmt.Errorf("You can only create a friendship between yourself and another user")
 	}
 
@@ -48,9 +50,23 @@ func FriendsCreate(c buffalo.Context) error {
 		return fmt.Errorf("failed to create friendship: %w", err)
 	}
 
-	c.Response().WriteHeader(http.StatusOK)
-	c.Response().Write([]byte("Success!"))
-	return nil
+	// Go get information needed to send back a new friend struct
+	var user models.User
+	if err := tx.Where("id = ? ", friend.Receiver).First(&user); err != nil {
+		return fmt.Errorf("failed to get information about a user: %w", err)
+	}
+
+	newFriend := struct {
+		Email    string    `json:"email"`
+		FriendID uuid.UUID `json:"friend_id"`
+		Approved bool      `json:"approved"`
+	}{
+		Email:    user.Email,
+		FriendID: user.ID,
+		Approved: false,
+	}
+
+	return c.Render(http.StatusOK, r.JSON(newFriend))
 }
 
 func FriendsList(c buffalo.Context) error {
@@ -89,7 +105,7 @@ func FriendsList(c buffalo.Context) error {
 		}
 
 		if err := txn.Find(&user, friendLookupID); err != nil {
-			c.Logger().Warn("user %s has is friend with a deleted user %s", userID, friendLookupID)
+			c.Logger().Warn("user %s is friends with a deleted user %s", userID, friendLookupID)
 			continue
 		}
 		// Remove password from user

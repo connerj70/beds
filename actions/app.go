@@ -2,15 +2,16 @@ package actions
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/worker"
 	"github.com/gobuffalo/envy"
 	csrf "github.com/gobuffalo/mw-csrf"
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
-	tokenauth "github.com/gobuffalo/mw-tokenauth"
 	"github.com/unrolled/secure"
 
 	"beds/models"
@@ -65,14 +66,14 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
-		// Setup up and use authentication.
-		app.Use(tokenauth.New(tokenauth.Options{}))
+		app.Use(authenticate)
 
 		var userResource UsersResource
 		var bedsResource BedsResource
-		app.Middleware.Skip(tokenauth.New(tokenauth.Options{}), HomeHandler, userResource.Create, userResource.New, userResource.SignIn, userResource.SignInPage, userResource.SignOut)
+		app.Middleware.Skip(authenticate, HomeHandler, userResource.Create, userResource.New, userResource.SignIn, userResource.SignInPage, userResource.SignOut)
 
 		app.GET("/", HomeHandler)
+		app.GET("/index", Index)
 		app.GET("/signin", userResource.SignInPage)
 		app.POST("/signin", userResource.SignIn)
 		app.GET("/signout", userResource.SignOut)
@@ -80,6 +81,10 @@ func App() *buffalo.App {
 		app.Resource("/users", userResource)
 		app.POST("/beds/toggle_complete", bedsResource.ToggleComplete)
 		app.Resource("/beds", bedsResource)
+		app.POST("/friends/create", FriendsCreate)
+		app.GET("/friends/list/{id}", FriendsList)
+		app.GET("/friends/show", FriendsListPage)
+		app.ServeFiles("/", assetsBox) // serve files from the public directory
 
 		// Setup workers
 		w := app.Worker
@@ -107,11 +112,6 @@ func App() *buffalo.App {
 				}
 			}
 		}()
-
-		app.POST("/friends/create", FriendsCreate)
-		app.GET("/friends/list/{id}", FriendsList)
-		app.GET("/friends/show", FriendsListPage)
-		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 
 	return app
@@ -139,4 +139,30 @@ func forceSSL() buffalo.MiddlewareFunc {
 		SSLRedirect:     ENV == "production",
 		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
 	})
+}
+
+func authenticate(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		jwtString, err := c.Cookies().Get("jwt")
+		if err != nil {
+			return fmt.Errorf("missing authorization cookie")
+		}
+		if jwtString == "" {
+			return c.Redirect(http.StatusUnauthorized, "/signin")
+		}
+		// Parse the jwt
+		_, err = jwt.Parse(jwtString, func(token *jwt.Token) (interface{}, error) {
+			// Don't forget to validate the alg is what you expect:
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			}
+
+			return []byte(envy.Get("BEDS_JWT_SECRET", "")), nil
+		})
+		if err != nil {
+			return fmt.Errorf("there was in issue with the jwt: %w", err)
+		}
+		// If the user is signed in, call the next handler
+		return next(c)
+	}
 }

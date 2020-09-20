@@ -72,7 +72,10 @@ func (v BedsResource) Show(c buffalo.Context) error {
 
 	// Allocate an empty Bed
 	bed := &models.Bed{}
-	userID := c.Session().Get("userid").(uuid.UUID)
+	userID, err := c.Cookies().Get("user_id")
+	if err != nil {
+		return fmt.Errorf("failed to get user_id cookie: %w", err)
+	}
 	c.Set("userid", userID)
 
 	// To find the Bed the parameter bed_id is used.
@@ -116,8 +119,15 @@ func (v BedsResource) Create(c buffalo.Context) error {
 		return fmt.Errorf("no transaction found")
 	}
 
-	userID := c.Session().Get("userid").(uuid.UUID)
-	bed.UserID = userID
+	userID, err := c.Cookies().Get("user_id")
+	if err != nil {
+		return fmt.Errorf("failed to get user_id cookie: %w", err)
+	}
+	userIDUUID, err := uuid.FromString(userID)
+	if err != nil {
+		return fmt.Errorf("failed to convert userID string to uuid: %w", err)
+	}
+	bed.UserID = userIDUUID
 
 	// Validate the data from the html form
 	verrs, err := tx.ValidateAndCreate(bed)
@@ -240,7 +250,10 @@ func (v BedsResource) Destroy(c buffalo.Context) error {
 		return fmt.Errorf("no transaction found")
 	}
 
-	userID := c.Session().Get("userid").(uuid.UUID)
+	userID, err := c.Cookies().Get("user_id")
+	if err != nil {
+		return fmt.Errorf("failed to get user_id from cookie: %w", err)
+	}
 	// Allocate an empty Bed
 	bed := &models.Bed{}
 
@@ -258,7 +271,7 @@ func (v BedsResource) Destroy(c buffalo.Context) error {
 		c.Flash().Add("success", T.Translate(c, "bed.destroyed.success"))
 
 		// Redirect to the index page
-		return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/users/%s", userID.String()))
+		return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/users/%s", userID))
 	}).Wants("json", func(c buffalo.Context) error {
 		return c.Render(http.StatusOK, r.JSON(bed))
 	}).Wants("xml", func(c buffalo.Context) error {
@@ -274,8 +287,6 @@ func (v BedsResource) ToggleComplete(c buffalo.Context) error {
 	}
 
 	bedID := c.Param("bedid")
-
-	fmt.Println(bedID)
 
 	qry := tx.RawQuery("UPDATE beds SET complete = NOT complete WHERE id = ?", bedID)
 

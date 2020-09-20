@@ -164,21 +164,35 @@ func (v UsersResource) Create(c buffalo.Context) error {
 		}).Respond(c)
 	}
 
-	// Set the authentication token on the response
-	claims := jwt.MapClaims{}
-	claims["userid"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	// add more claims
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	oneWeekInFuture := time.Now().AddDate(0, 0, 7).UTC().Unix()
 
-	secretKey := envy.Get("JWT_SECRET", "")
-
-	tokenString, err := token.SignedString([]byte(secretKey))
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
+		ExpiresAt: oneWeekInFuture,
+		Issuer:    "main",
+	})
+	tokenString, err := token.SignedString([]byte(envy.Get("BEDS_JWT_SECRET", "")))
 	if err != nil {
-		return fmt.Errorf("failed to create authorization token: %w", err)
+		return fmt.Errorf("failed to sign token %w", err)
 	}
 
-	c.Session().Set("Authorization", fmt.Sprintf("Bearer %s", tokenString))
+	ck := http.Cookie{
+		Name:    "jwt",
+		Value:   tokenString,
+		Path:    "/",
+		Expires: time.Now().Add(30 * 24 * time.Hour),
+	}
+
+	ck2 := http.Cookie{
+		Name:    "user_id",
+		Value:   user.ID.String(),
+		Path:    "/",
+		Expires: time.Now().Add(30 * 24 * time.Hour),
+	}
+
+	http.SetCookie(c.Response(), &ck2)
+	http.SetCookie(c.Response(), &ck)
+
+	user.Password = ""
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// If there are no errors set a success message
@@ -334,7 +348,7 @@ func (v UsersResource) SignIn(c buffalo.Context) error {
 		return fmt.Errorf("no transaction found")
 	}
 
-	// Go get the user form the database with this email
+	// Go get the user from the database with this email
 	var checkUser models.User
 	if err := tx.Where("email = ?", user.Email).First(&checkUser); err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
@@ -349,28 +363,46 @@ func (v UsersResource) SignIn(c buffalo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("users/signin.plush.html"))
 	}
 
-	// Set the authentication token on the response
-	claims := jwt.MapClaims{}
-	claims["userid"] = checkUser.ID
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	// add more claims
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	oneWeekInFuture := time.Now().AddDate(0, 0, 7).UTC().Unix()
 
-	secretKey := envy.Get("JWT_SECRET", "")
-
-	tokenString, err := token.SignedString([]byte(secretKey))
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
+		ExpiresAt: oneWeekInFuture,
+		Issuer:    "main",
+	})
+	tokenString, err := token.SignedString([]byte(envy.Get("BEDS_JWT_SECRET", "")))
 	if err != nil {
-		return fmt.Errorf("failed to create authorization token: %w", err)
+		return fmt.Errorf("failed to sign token %w", err)
 	}
 
-	c.Session().Set("Authorization", fmt.Sprintf("Bearer %s", tokenString))
-	c.Session().Set("userid", checkUser.ID)
+	ck := http.Cookie{
+		Name:    "jwt",
+		Value:   tokenString,
+		Path:    "/",
+		Expires: time.Now().Add(30 * 24 * time.Hour),
+	}
+
+	ck2 := http.Cookie{
+		Name:    "user_id",
+		Value:   checkUser.ID.String(),
+		Path:    "/",
+		Expires: time.Now().Add(30 * 24 * time.Hour),
+	}
+
+	http.SetCookie(c.Response(), &ck2)
+	http.SetCookie(c.Response(), &ck)
+
+	user.Password = ""
+	user.CreatedAt = checkUser.CreatedAt
+	user.ID = checkUser.ID
+	user.UpdatedAt = checkUser.UpdatedAt
 
 	return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/users/%s", checkUser.ID))
 }
 
 func (v UsersResource) SignOut(c buffalo.Context) error {
 	c.Session().Clear()
+	c.Cookies().Delete("jwt")
+	c.Cookies().Delete("user_id")
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 
