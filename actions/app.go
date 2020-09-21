@@ -2,7 +2,10 @@ package actions
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -100,14 +103,57 @@ func App() *buffalo.App {
 		// Push jobs on worker at the end of every day
 		go func() {
 			t := time.NewTicker(1 * time.Minute)
+
+			var file *os.File
+			var err error
+			var lastBedsResetTime time.Time
+			_, err = os.Stat("/tmp/beds/reset_time")
+			if err != nil {
+				log.Println("reset_time file does not exist creating one now")
+				file, err = os.Create("/tmp/beds/reset_time")
+				if err != nil {
+					log.Panicln("failed to create reset_time file: ", err)
+				}
+				now := time.Now()
+				lastBedsResetTime = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 1, 0, time.UTC)
+				currentTimeStr := lastBedsResetTime.Format(time.RFC3339)
+				_, err := file.WriteAt([]byte(currentTimeStr), 0)
+				if err != nil {
+					log.Println("failed to write to reset_time file: ", err)
+				}
+			} else {
+				file, err = os.Open("/tmp/beds/reset_time")
+				if err != nil {
+					log.Panicln("failed to open reset_time file: ", err)
+				}
+
+				fileContent, err := ioutil.ReadAll(file)
+				if err != nil {
+					log.Panicln("failed to read reset_time file: ", err)
+				}
+
+				lastBedsResetTime, err = time.Parse(time.RFC3339, string(fileContent))
+				if err != nil {
+					log.Panicln("failed to parse reset_time contents: ", err)
+				}
+			}
+
 			for {
 				select {
 				case currentTime := <-t.C:
-					if currentTime.Hour() == 0 && currentTime.Minute() == 0 {
+					currentTimeUTC := currentTime.UTC()
+					if currentTimeUTC.After(lastBedsResetTime) {
 						w.Perform(worker.Job{
 							Queue:   "default",
 							Handler: "reset_daily_beds",
 						})
+
+						nextResetTime := lastBedsResetTime.AddDate(0, 0, 1)
+						nextResetTimeStr := nextResetTime.Format(time.RFC3339)
+						_, err := file.WriteAt([]byte(nextResetTimeStr), 0)
+						if err != nil {
+							log.Println("failed to write to reset_time file: ", err)
+						}
 					}
 				}
 			}
