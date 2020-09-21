@@ -209,6 +209,14 @@ func authenticate(next buffalo.Handler) buffalo.Handler {
 		if err != nil {
 			return fmt.Errorf("there was in issue with the jwt: %w", err)
 		}
+
+		userID, err := c.Cookies().Get("user_id")
+		if err != nil {
+			return fmt.Errorf("missing user_id cookie")
+		}
+
+		c.Set("user_id", userID)
+
 		// If the user is signed in, call the next handler
 		return next(c)
 	}

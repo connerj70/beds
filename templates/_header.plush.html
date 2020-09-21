@@ -2,7 +2,11 @@
     <div class="col-md-12 p-4 d-flex align-items-center justify-content-between">
         <a href="/"><img class="custom-logo" src=<%= assetPath("images/logo_transparent.png") %> /></a>
         <%= if (token) { %> 
-            <%=linkTo(signoutPath(), {body: "Sign Out", class:"btn btn-warning"}) %> 
+            <ul id="menu-container" class="d-flex flex-row align-items-center" style="list-style-type: none;">
+
+            <li><%= linkTo(friendsShowPath(), {body: "Friends", class:"mr-4 cursor-pointer menu-item text-dark text-decoration-none"})%></li>
+            <li><%=linkTo(signoutPath(), {body: "Sign Out", class:"btn btn-warning"}) %></li>
+            </ul>
         <% } else {%>
             <ul id="menu-container" class="d-flex flex-row align-items-center" style="list-style-type: none;">
                 <li class="mr-4 cursor-pointer menu-item">About Us</li>
