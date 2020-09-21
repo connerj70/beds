@@ -4,9 +4,9 @@
         <%= if (token) { %> 
             <%=linkTo(signoutPath(), {body: "Sign Out", class:"btn btn-warning"}) %> 
         <% } else {%>
-            <ul class="d-flex flex-row align-items-center" style="list-style-type: none;">
-                <li class="mr-4 cursor-pointer">About Us</li>
-                <li class="mr-4 cursor-pointer">FAQ</li>
+            <ul id="menu-container" class="d-flex flex-row align-items-center" style="list-style-type: none;">
+                <li class="mr-4 cursor-pointer menu-item">About Us</li>
+                <li class="mr-4 cursor-pointer menu-item">FAQ</li>
                 <li><%=linkTo(signinPath(), {body: "Sign In", class:"btn btn-secondary mr-4"}) %></li>
                 <li><%=linkTo(newUsersPath(), {body: "Get Started", class:"btn btn-primary"}) %> </li>
             </ul>

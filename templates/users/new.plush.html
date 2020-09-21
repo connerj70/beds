@@ -1,9 +1,9 @@
-<div class="py-4 mb-2">
+<div class="py-4 mb-2 pl-4">
   <h3 class="d-inline-block">Register</h3>
 </div>
-
+<div id="bouncer-2"></div>
 <%= if (errors.HasAny()) { %>
-<div class="row">
+<div class="row pl-4">
   <div class="col-md-12">
         <div class="alert alert-danger" role="alert">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
@@ -13,7 +13,11 @@
 </div>
 <% } %>
 
-<%= formFor(user, {action: usersPath(), method: "POST"}) { %>
-  <%= partial("users/form.html") %>
-  <%= linkTo(usersPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
-<% } %>
+<div class="row pl-4">
+  <div class="col-lg-6">
+  <%= formFor(user, {action: usersPath(), method: "POST"}) { %>
+    <%= partial("users/form.html") %>
+    <%= linkTo(usersPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
+  <% } %>
+  </div>
+</div>
