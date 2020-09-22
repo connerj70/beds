@@ -14,11 +14,12 @@ import (
 
 // User is used by pop to map your users database table to your go code.
 type User struct {
-	ID        uuid.UUID `json:"id" db:"id"`
-	Email     string    `json:"email" db:"email"`
-	Password  string    `json:"password,omitempty" db:"password_hash"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	ID              uuid.UUID `json:"id" db:"id"`
+	Email           string    `json:"email" db:"email"`
+	Password        string    `json:"password,omitempty" db:"password_hash"`
+	ConfirmPassword string    `json:"confirm_password,omitempty" db:"-"`
+	CreatedAt       time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted
@@ -57,6 +58,12 @@ func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	if checkUser.ID != emptyUUID {
 		errors := validate.NewErrors()
 		errors.Add("errors", "a user with this email already exists")
+		return errors, nil
+	}
+
+	if u.Password != u.ConfirmPassword {
+		errors := validate.NewErrors()
+		errors.Add("errors", "passwords do not match")
 		return errors, nil
 	}
 

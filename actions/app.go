@@ -92,11 +92,9 @@ func App() *buffalo.App {
 		// Setup workers
 		w := app.Worker
 		w.Register("reset_daily_beds", func(worker.Args) error {
-
 			if err := models.DB.RawQuery("UPDATE beds SET complete = false WHERE frequency = 1").Exec(); err != nil {
 				return fmt.Errorf("failed to reset daily beds")
 			}
-
 			return nil
 		})
 
@@ -122,7 +120,7 @@ func App() *buffalo.App {
 					log.Println("failed to write to reset_time file: ", err)
 				}
 			} else {
-				file, err = os.Open("/tmp/beds/reset_time")
+				file, err = os.OpenFile("/tmp/beds/reset_time", os.O_APPEND|os.O_RDWR, os.ModePerm)
 				if err != nil {
 					log.Panicln("failed to open reset_time file: ", err)
 				}

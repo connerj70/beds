@@ -19,10 +19,14 @@
     </div>
 </div>
    <% } %> 
-        <div class="row pl-4">
-            <div class="col-lg-6">
-            <%= formFor(user, {action: signinPath(), method: "POST"}) { %>
+    <div class="row pl-4 d-flex flex-row align-items-center justify-content-between">
+        <div class="col-lg-6 d-flex flex-column justify-content-center">
+            <%= form({action: signinPath(), method: "POST"}) { %>
             <%=partial("users/formsignin.html") %> <% } %>
             <div class="mt-4">Don't have an account? <a href="<%=newUsersPath()%>"> Create One</a></div>
+        </div>
+        <div class="col-lg-6 d-flex justify-content-end">
+                <img width=400 height=400 src="<%= assetPath("images/drawkit-full-stack-man-colour.svg") %>" />
+        </div>
     </div>
 </div>
