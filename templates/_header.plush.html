@@ -1,19 +1,20 @@
-<div class="row">
-    <div class="col-md-12 p-4 d-flex align-items-center justify-content-between">
-        <a href="/"><img class="custom-logo" src=<%= assetPath("images/logo_transparent.png") %> /></a>
-        <%= if (token) { %> 
-            <ul id="menu-container" class="d-flex flex-row align-items-center" style="list-style-type: none;">
+<nav class="navbar navbar-expand-lg navbar-light">
+    <a href="/"><img class="custom-logo navbar-brand" src=<%= assetPath("images/logo_transparent.png") %> /></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-            <li><%= linkTo(friendsShowPath(), {body: "Friends", class:"mr-4 cursor-pointer menu-item text-dark text-decoration-none"})%></li>
-            <li><%=linkTo(signoutPath(), {body: "Sign Out", class:"btn btn-warning"}) %></li>
-            </ul>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto d-flex align-items-center justify-content-end w-100">
+        <%= if (token) { %> 
+            <li class="nav-link nav-item"><%= linkTo(friendsShowPath(), {body: "Friends", class:"nav-link cursor-pointer menu-item text-dark text-decoration-none"})%></li>
+            <li class="nav-link nav-item"><%=linkTo(signoutPath(), {body: "Sign Out", class:"btn btn-warning"}) %></li>
         <% } else {%>
-            <ul id="menu-container" class="d-flex flex-row align-items-center" style="list-style-type: none;">
-                <li class="mr-4 cursor-pointer menu-item">About Us</li>
-                <li class="mr-4 cursor-pointer menu-item">FAQ</li>
-                <li><%=linkTo(signinPath(), {body: "Sign In", class:"btn btn-secondary mr-4"}) %></li>
-                <li><%=linkTo(newUsersPath(), {body: "Register", class:"btn btn-primary"}) %> </li>
-            </ul>
+            <li class="nav-link nav-item cursor-pointer menu-item">About Us</li>
+            <li class="nav-link nav-item cursor-pointer menu-item">FAQ</li>
+            <li class="nav-item nav-link"><%=linkTo(signinPath(), {body: "Sign In", class:"btn btn-secondary"}) %></li>
+            <li class="nav-item nav-link"><%=linkTo(newUsersPath(), {body: "Register", class:"btn btn-primary"}) %> </li>
         <%}%>
+        </ul>
     </div>
-</div>
+</nav>
