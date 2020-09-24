@@ -10,8 +10,8 @@
             <li class="nav-link nav-item"><%= linkTo(friendsShowPath(), {body: "Friends", class:"nav-link cursor-pointer menu-item text-dark text-decoration-none"})%></li>
             <li class="nav-link nav-item"><%=linkTo(signoutPath(), {body: "Sign Out", class:"btn btn-warning"}) %></li>
         <% } else {%>
-            <li class="nav-link nav-item cursor-pointer menu-item">About Us</li>
-            <li class="nav-link nav-item cursor-pointer menu-item">FAQ</li>
+            <li class="nav-link nav-item cursor-pointer menu-item"><%=linkTo(aboutPath(), {body: "About Us", class:"no-underline text-dark", style:"text-decoration:none;"}) %></li>
+            <li class="nav-link nav-item cursor-pointer menu-item"><%=linkTo(faqPath(), {body: "FAQ", class:"no-underline text-dark", style:"text-decoration:none;"}) %></li>
             <li class="nav-item nav-link"><%=linkTo(signinPath(), {body: "Sign In", class:"btn btn-secondary"}) %></li>
             <li class="nav-item nav-link"><%=linkTo(newUsersPath(), {body: "Register", class:"btn btn-primary"}) %> </li>
         <%}%>

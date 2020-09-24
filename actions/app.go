@@ -73,7 +73,7 @@ func App() *buffalo.App {
 
 		var userResource UsersResource
 		var bedsResource BedsResource
-		app.Middleware.Skip(authenticate, HomeHandler, userResource.Create, userResource.New, userResource.SignIn, userResource.SignInPage, userResource.SignOut)
+		app.Middleware.Skip(authenticate, HomeHandler, userResource.Create, userResource.New, userResource.SignIn, userResource.SignInPage, userResource.SignOut, AboutHandler, FAQHandler)
 
 		app.GET("/", HomeHandler)
 		app.GET("/index", Index)
@@ -87,6 +87,8 @@ func App() *buffalo.App {
 		app.POST("/friends/create", FriendsCreate)
 		app.GET("/friends/list/{id}", FriendsList)
 		app.GET("/friends/show", FriendsListPage)
+		app.GET("/about", AboutHandler)
+		app.GET("/faq", FAQHandler)
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 
 		// Setup workers

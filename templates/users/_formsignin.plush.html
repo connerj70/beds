@@ -1,5 +1,5 @@
 <label for="Email">Email</label>
-<%= f.InputTag({name:"Email", value: user.Email}) %> 
+<%= f.InputTag({name:"Email", value: user.Email, required:true}) %> 
 <label for="Password">Password</label>
-<%= f.InputTag({name:"Password", value:user.Password, type:"password"}) %>
+<%= f.InputTag({name:"Password", value:user.Password, type:"password", required:true}) %>
 <button class="btn btn-success" role="submit">Sign In</button>
