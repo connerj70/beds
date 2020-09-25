@@ -6,7 +6,7 @@ $(() => {
     $(".complete").on("click", (event) => {
         $.ajax({
             method: "POST",
-            url: "http://habitbeds.com/beds/toggle_complete",
+            url: "https://makeyourbed.io/beds/toggle_complete",
             data: { bedid: event.target.dataset.bedid },
         });
     });
