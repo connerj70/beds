@@ -40,6 +40,13 @@ html, body {
     transform: skew(20deg);
 }
 
+@media(max-width: 500px) {
+    #bouncer {
+        width: 250px;
+        height: 400px;
+    }
+}
+
 .custom-logo {
     max-width: 150px;
     position: relative;
@@ -53,4 +60,65 @@ html, body {
 .menu-item:hover {
     color: #0074D9;
     border-bottom: 1px solid #0074D9;
+}
+
+.blue-gradient {
+    background: rgb(111,168,255);
+    background: linear-gradient(90deg, rgba(111,168,255,1) 0%, rgba(17,16,156,0.33487297921478065) 100%, rgba(0,212,255,1) 100%);
+    background-size: 50px;
+    background-repeat: no-repeat;
+    border-right: 25px;
+    border-bottom-right-radius: 35px;
+}
+
+.gradient-block-top-right {
+    width: 400px;
+    height: 500px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    background: rgb(111,168,255);
+    background: linear-gradient(90deg, rgba(111,168,255,0.1) 0%, rgba(17,16,156,0.13487297921478065) 100%, rgba(0,212,255,0.1) 100%);
+    background-repeat: no-repeat;
+    border-bottom-left-radius: 325px;
+    border-bottom-right-radius: 25px;
+    border-top-left-radius: 225px;
+    z-index: -1;
+}
+
+.gradient-block-top-right-2 {
+    width: 400px;
+    height: 500px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    background: rgb(213,188,244);
+    background: linear-gradient(90deg, rgba(213,188,244,0.11248249299719892) 0%, rgba(189,127,224,0.2329306722689075) 12%, rgba(177,85,222,0.33657212885154064) 75%);
+    background-repeat: no-repeat;
+    border-bottom-left-radius: 325px;
+    border-bottom-right-radius: 25px;
+    border-top-left-radius: 675px;
+    z-index: -1;
+}
+
+.gradient-block-bottom-left {
+    width: 300px;
+    height: 500px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    background: rgb(111,168,255);
+    background: linear-gradient(90deg, rgba(111,168,255,0.1) 0%, rgba(17,16,156,0.13487297921478065) 100%, rgba(0,212,255,0.1) 100%);
+    background-repeat: no-repeat;
+    border-bottom-right-radius: 225px;
+    border-top-right-radius: 325px;
+    z-index: -1;
+}
+
+.grow-hover {
+    transition: all .2s ease-in-out;
+}
+
+.grow-hover:hover {
+    transform: scale(1.05);
 }

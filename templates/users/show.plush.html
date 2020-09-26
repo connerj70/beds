@@ -1,22 +1,31 @@
 <div class="py-4 mb-2">
-    <h3 class="d-inline-block">User Home Page</h3>
-    <div id="like_button_container"></div>
-    <div>
+    <div class="gradient-block-top-right"></div>
+    <div class="gradient-block-top-right-2"></div>
+    <div class="gradient-block-bottom-left"></div>
+    <h3 class="d-inline-block mb-3">Welcome To Beds, <%= user.Email %></h3>
         <%= if (beds && len(beds) > 0) { %> 
             <h6>You've completed <%= len(completeBeds) %> out of your <%= len(beds) %> beds for today</h6>
-            <%= linkTo(newBedsPath(), {body: "Create bed", class: "btn btn-primary mb-4"}) %> 
-            <%= if(len(incompleteBeds) > 0) { %>
-                <h4 class="pb-2">Your Incomplete Beds</h4>
-                <%= for (key, bed) in incompleteBeds { %> 
-                    <%= partial("beds/card.html") %>
-                <% } %> 
-            <% } %>
-            <%= if(len(completeBeds) > 0) { %>
-                <h4 class="pb-2">Your Complete Beds</h4>
-                <%= for (key, bed) in completeBeds { %> 
-                    <%= partial("beds/card.html") %>
-                <% } %> 
-            <%}%>
+            <%= linkTo(newBedsPath(), {body: "Create bed", class: "btn btn-outline-primary mb-4"}) %> 
+            <div class="row">
+                <div class="col-lg-8 mb-5">
+                    <%= if(len(incompleteBeds) > 0) { %>
+                        <h6 class="pb-4">Your Incomplete Beds</h6>
+                        <%= for (key, bed) in incompleteBeds { %> 
+                            <%= partial("beds/card.html") %>
+                        <% } %> 
+                    <% } %>
+                </div>
+                <div class="col-lg-4">
+                    <%= if(len(completeBeds) > 0) { %>
+                        <div>
+                            <h6 class="pb-4">Your Complete Beds</h6>
+                            <%= for (key, bed) in completeBeds { %> 
+                                <%= partial("beds/card.html") %>
+                            <% } %> 
+                        </div>
+                    <%}%>
+                </div>
+            </div>
         <% } else { %>
 
             <p>Welcome to Beds! Beds is an app to help you form daily habits. A "bed" is a small task you want to do everyday. Think something like making your bed each morning.</p>
@@ -26,5 +35,4 @@
             <h5>You don't have any beds. Create your first one now!</h5>
             <%= linkTo(newBedsPath(), {body: "Create your first bed"}) %> 
         <% } %>
-    </div>
 </div>

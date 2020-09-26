@@ -1,25 +1,31 @@
-<div class="card mb-3">
+<div class="card mb-3 w-100 shadow blue-gradient zindex-dropdown grow-hover">
     <div class="card-body">
-        <h5 class="card-title"><%= bed.Title%></h5>
-        <div class="card-text">
+        <h5 class="card-title" style="padding-left: 50px;"><%= bed.Title%></h5>
+        <div class="card-text" style="padding-left: 50px;">
             <p><%= bed.Description%></p>
-            <div class="mb-1">
-                Frequency: <%= if (bed.Frequency == 1) { %> Daily <%} else
-                if(bed.Frequency == 2) {%> Weekly <%} else {%> Monthly <%}%>
+            <div class="w-100 d-flex justify-content-between align-items-center">
+                <div>
+                    <div>
+                        Frequency: <%= if (bed.Frequency == 1) { %> Daily <%} else
+                        if(bed.Frequency == 2) {%> Weekly <%} else {%> Monthly <%}%>
+                    </div>
+                    <div>
+                        Complete:
+                        <input
+                            data-bedid="<%=bed.ID %>"
+                            type="checkbox"
+                            class="complete cursor-pointer"
+                            name="complete"
+                            <%= if (bed.Complete) { %>
+                            <%= "checked" %>
+                            <%}%>
+                        />
+                    </div>
+                 </div>
+                <div>
+                    <%= linkTo(bed, {body: "view", class:"btn btn-outline-primary mt-2"}) %>
+                </div>
             </div>
-            <div>
-                Complete:
-                <input
-                    data-bedid="<%=bed.ID %>"
-                    type="checkbox"
-                    class="complete"
-                    name="complete"
-                    <%= if (bed.Complete) { %>
-                    <%= "checked" %>
-                    <%}%>
-                />
-            </div>
-            <%= linkTo(bed, {body: "view", class:"btn btn-secondary mt-2"}) %>
         </div>
     </div>
 </div>

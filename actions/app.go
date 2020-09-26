@@ -103,7 +103,6 @@ func App() *buffalo.App {
 		// Push jobs on worker at the end of every day
 		go func() {
 			t := time.NewTicker(1 * time.Minute)
-
 			var file *os.File
 			var err error
 			var lastBedsResetTime time.Time
