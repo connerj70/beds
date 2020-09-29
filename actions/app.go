@@ -131,6 +131,7 @@ func App() *buffalo.App {
 						})
 
 						nextResetTime := lastBedsResetTime.AddDate(0, 0, 1)
+						lastBedsResetTime = nextResetTime
 						nextResetTimeStr := nextResetTime.Format(time.RFC3339)
 						_, err := f.WriteAt([]byte(nextResetTimeStr), 0)
 						if err != nil {
