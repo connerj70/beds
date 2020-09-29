@@ -103,38 +103,21 @@ func App() *buffalo.App {
 		// Push jobs on worker at the end of every day
 		go func() {
 			t := time.NewTicker(1 * time.Minute)
-			var file *os.File
-			var err error
-			var lastBedsResetTime time.Time
-			_, err = os.Stat("/tmp/beds/reset_time")
+
+			f, err := os.OpenFile("/tmp/beds/reset_time", os.O_RDWR, 0664)
 			if err != nil {
-				log.Println("reset_time file does not exist creating one now")
-				file, err = os.Create("/tmp/beds/reset_time")
-				if err != nil {
-					log.Panicln("failed to create reset_time file: ", err)
-				}
-				now := time.Now()
-				lastBedsResetTime = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 1, 0, time.UTC)
-				currentTimeStr := lastBedsResetTime.Format(time.RFC3339)
-				_, err := file.WriteAt([]byte(currentTimeStr), 0)
-				if err != nil {
-					log.Println("failed to write to reset_time file: ", err)
-				}
-			} else {
-				file, err = os.OpenFile("/tmp/beds/reset_time", os.O_APPEND|os.O_RDWR, os.ModePerm)
-				if err != nil {
-					log.Panicln("failed to open reset_time file: ", err)
-				}
+				panic(err)
+			}
+			defer f.Close()
 
-				fileContent, err := ioutil.ReadAll(file)
-				if err != nil {
-					log.Panicln("failed to read reset_time file: ", err)
-				}
+			fileContent, err := ioutil.ReadAll(f)
+			if err != nil {
+				panic(err)
+			}
 
-				lastBedsResetTime, err = time.Parse(time.RFC3339, string(fileContent))
-				if err != nil {
-					log.Panicln("failed to parse reset_time contents: ", err)
-				}
+			lastBedsResetTime, err := time.Parse(time.RFC3339, string(fileContent))
+			if err != nil {
+				log.Panicln("failed to parse reset_time contents: ", err)
 			}
 
 			for {
@@ -149,7 +132,7 @@ func App() *buffalo.App {
 
 						nextResetTime := lastBedsResetTime.AddDate(0, 0, 1)
 						nextResetTimeStr := nextResetTime.Format(time.RFC3339)
-						_, err := file.WriteAt([]byte(nextResetTimeStr), 0)
+						_, err := f.WriteAt([]byte(nextResetTimeStr), 0)
 						if err != nil {
 							log.Println("failed to write to reset_time file: ", err)
 						}
@@ -157,8 +140,8 @@ func App() *buffalo.App {
 				}
 			}
 		}()
-	}
 
+	}
 	return app
 }
 
