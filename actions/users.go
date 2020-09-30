@@ -401,8 +401,20 @@ func (v UsersResource) SignIn(c buffalo.Context) error {
 
 func (v UsersResource) SignOut(c buffalo.Context) error {
 	c.Session().Clear()
-	c.Cookies().Delete("jwt")
-	c.Cookies().Delete("user_id")
+	deleteUserIDCookie := http.Cookie{
+		Name:    "user_id",
+		Value:   "v",
+		Path:    "/",
+		Expires: time.Now().AddDate(-10, 0, 0),
+	}
+	http.SetCookie(c.Response(), &deleteUserIDCookie)
+	deleteJWTCookie := http.Cookie{
+		Name:    "jwt",
+		Value:   "v",
+		Path:    "/",
+		Expires: time.Now().AddDate(-10, 0, 0),
+	}
+	http.SetCookie(c.Response(), &deleteJWTCookie)
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 

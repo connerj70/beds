@@ -9,6 +9,10 @@ import (
 // HomeHandler is a default handler to serve up
 // a home page.
 func HomeHandler(c buffalo.Context) error {
+	userID, _ := c.Cookies().Get("user_id")
+	if userID != "" {
+		c.Redirect(http.StatusSeeOther, "/users/%s", userID)
+	}
 	return c.Render(http.StatusOK, r.HTML("index2.html"))
 }
 

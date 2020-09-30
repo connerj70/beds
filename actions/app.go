@@ -6,7 +6,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gobuffalo/buffalo"
-	"github.com/gobuffalo/buffalo/worker"
 	"github.com/gobuffalo/envy"
 	csrf "github.com/gobuffalo/mw-csrf"
 	forcessl "github.com/gobuffalo/mw-forcessl"
@@ -86,57 +85,6 @@ func App() *buffalo.App {
 		app.GET("/about", AboutHandler)
 		app.GET("/faq", FAQHandler)
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
-
-		// Setup workers
-		w := app.Worker
-		w.Register("reset_daily_beds", func(worker.Args) error {
-			if err := models.DB.RawQuery("UPDATE beds SET complete = false WHERE frequency = 1").Exec(); err != nil {
-				return fmt.Errorf("failed to reset daily beds")
-			}
-			return nil
-		})
-
-		// // Push jobs on worker at the end of every day
-		// go func() {
-		// 	t := time.NewTicker(1 * time.Minute)
-
-		// 	f, err := os.OpenFile("/tmp/beds/reset_time", os.O_RDWR, 0664)
-		// 	if err != nil {
-		// 		panic(err)
-		// 	}
-		// 	defer f.Close()
-
-		// 	fileContent, err := ioutil.ReadAll(f)
-		// 	if err != nil {
-		// 		panic(err)
-		// 	}
-
-		// 	lastBedsResetTime, err := time.Parse(time.RFC3339, string(fileContent))
-		// 	if err != nil {
-		// 		log.Panicln("failed to parse reset_time contents: ", err)
-		// 	}
-
-		// 	for {
-		// 		select {
-		// 		case currentTime := <-t.C:
-		// 			currentTimeUTC := currentTime.UTC()
-		// 			if currentTimeUTC.After(lastBedsResetTime) {
-		// 				w.Perform(worker.Job{
-		// 					Queue:   "default",
-		// 					Handler: "reset_daily_beds",
-		// 				})
-
-		// 				nextResetTime := lastBedsResetTime.AddDate(0, 0, 1)
-		// 				lastBedsResetTime = nextResetTime
-		// 				nextResetTimeStr := nextResetTime.Format(time.RFC3339)
-		// 				_, err := f.WriteAt([]byte(nextResetTimeStr), 0)
-		// 				if err != nil {
-		// 					log.Println("failed to write to reset_time file: ", err)
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }()
 
 	}
 	return app
